@@ -1,95 +1,115 @@
 package main.java.com.techreturners.romannumerals;
 
-
 public class Roman_Numerals {
 
-    public enum ConversionList {
-        One("I", 1),
-        Five("V", 5),
-        Ten("X", 10);
 
-        private String romanName = "";
-        private int number = 0;
-
-        ConversionList(String romanName, int number) {
-            this.romanName = romanName;
-            this.number = number;
-        }
-        public String getRomanName() {
-            return romanName;
-        }
-
-        public int getNumeral() {
-            return number;
+    public String getRoman(int num, String a, String b, String c){
+        switch(num) {
+            case 1:
+                return a;
+            case 2:
+                return a + a;
+            case 3:
+                return a + a + a;
+            case 4:
+                return a + b;
+            case 5:
+                return b;
+            case 6:
+                return b + a;
+            case 7:
+                return b + a + a;
+            case 8:
+                return b + a + a + a;
+            case 9:
+                return a + c;
+            case 10:
+                return c;
+            default:
+                return "Wrong, Please enter a correct number";
         }
     }
+
 
     //PART - I
     public String convertNumberToRoman(int number){
 
+        String min = "";
+        String mid = "";
+        String max = "";
+
         String resStr = "";
-        int previousVal = 0;
-        int currentVal = 0;
-        String previousName = "";
-        String currentName = "";
+        String intToStr = Integer.toString(number);
 
-        for (ConversionList LIST_MAP : ConversionList.values()) {
+        int ones = number % 10;
+        int tens = 0;
 
-            currentVal = LIST_MAP.getNumeral();
-            currentName = LIST_MAP.getRomanName();
-
-            int diff  = number - previousVal;
-            //System.out.print(previousVal + diff);
-
-            if ( (number == 1) || (number == 5) || (number == 10) ){
-                if ( currentVal ==  number) {
-                    resStr = currentName;
-                    System.out.print(resStr + currentVal);
-                    break;
-                }
-            }
-            else if  (( previousVal < number) && ( previousVal != 0)) {
-
-                if (diff == 1) {
-                    resStr = previousName + resStr;
-                }
-
-                else {
-                    for (int i = 1; i <=number; i++) {
-                        resStr = resStr + previousName;
-                        System.out.print("I am");
-                    }
-
-                }
-                System.out.print(resStr);
-            }
-
-            previousVal = LIST_MAP.getNumeral();
-            previousName = LIST_MAP.getRomanName();
+        if (intToStr.length() >= 2){
+            ones = number % 10;
+            tens = number / 10;
         }
-
+        if (ones == 0) {
+            resStr = getRoman(ones, min, mid, max);
+        }
+        if ( (ones < 10) && (ones != 0) ){
+            min = "I";
+            mid = "V";
+            max = "X";
+            resStr = getRoman(ones, min, mid, max);
+        }
+        if ( (tens > 0) && (tens <= 10) ){
+            min = "X";
+            mid = "L";
+            max = "C";
+            resStr = getRoman(tens, min, mid, max) + resStr;
+            //System.out.println(resStr);
+        }
         return resStr;
-
-        /*
-        switch(number){
-            case 1:
-                return "I";
-            case 5:
-                return "V";
-            case 10:
-                return "X";
-            default:
-                return "Wrong, Please enter a correct number";
-        }
-        */
-
 
     }
 
     //PART - II
+
+    public int getRange(String str){
+        switch(str) {
+            case "I":
+                return 1;
+            case "V":
+                return 5;
+            case "X":
+                return 10;
+            case "L":
+                return 50;
+            case "C":
+                return 100;
+            default:
+                return 0;
+        }
+    }
+
     public int convertRomanToNumber(String str){
-        if (str.equals("I"))
-            return 1;
-        else return 0;
+
+        int result = 0;
+        int prevResult = 0;
+
+        if (str.length() == 1) {
+            return getRange(str.substring(str.length()-1));
+        }
+        else {
+
+            for (int i = 0; i < str.length(); i++) {
+                int rangeVal = getRange(str.substring(i, i+1));
+
+                if ((rangeVal > prevResult) && (prevResult > 0)){
+                    result = getRange(str.substring(i, i+1)) - prevResult;
+                }
+                else {
+                    result = result + getRange(str.substring(i, i + 1));
+                    prevResult = result;
+                }
+            }
+        }
+
+        return result;
     }
 }
